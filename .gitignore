@@ -1,0 +1,5 @@
+node_modules
+
+src/cookies.json
+
+src/.env
