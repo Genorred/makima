@@ -15,8 +15,10 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN pnpm install --force --frozen-lockfile
 
+COPY prisma ./prisma/
+
 COPY . .
 
-RUN npx prisma db pull
+RUN npx prisma generate
 
 CMD ["ts-node", "./src/index.ts"]
