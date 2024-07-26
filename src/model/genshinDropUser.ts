@@ -39,19 +39,19 @@ class GenshinDropUser extends Model<
 GenshinDropUser.init({
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         number: {type: DataTypes.INTEGER, unique: true},
-        name: {type: DataTypes.STRING, unique: true},
-        xsrf: {type: DataTypes.STRING},
-        ddg: {type: DataTypes.STRING},
-        inviter: {type: DataTypes.STRING},
-        webName: {type: DataTypes.STRING},
-        webValue: {type: DataTypes.STRING},
-        unknownName: {type: DataTypes.STRING},
-        unknownValue: {type: DataTypes.STRING},
-        ses: {type: DataTypes.STRING},
+        name: {type: DataTypes.TEXT, unique: true},
+        xsrf: {type: DataTypes.TEXT},
+        ddg: {type: DataTypes.TEXT},
+        inviter: {type: DataTypes.TEXT},
+        webName: {type: DataTypes.TEXT},
+        webValue: {type: DataTypes.TEXT},
+        unknownName: {type: DataTypes.TEXT},
+        unknownValue: {type: DataTypes.TEXT},
+        ses: {type: DataTypes.TEXT},
         days: {type: DataTypes.INTEGER},
     },
     {
         sequelize: db,
-        tableName: 'GenshinDropUser'
+        tableName: 'GenshinDropUsers'
     })
 export default GenshinDropUser

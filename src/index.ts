@@ -21,7 +21,7 @@ app.use(morgan('combined'));
 app.use('/farm', appRouter)
 app.use(cookieParser());
 
-const COOKIE_FILE = './src/cookies.json';
+const COOKIE_FILE = './cookies.json';
 app.get('/send-request', async (req, res) => {
     try {
         // Чтение куки из файла, если он существует
@@ -69,7 +69,7 @@ const start = async () => {
         await db.authenticate()
         await db.sync().then(result => {
             console.log("Database connected");
-            app.listen(3000);
+            app.listen(port);
         })
             .catch(err => console.log(err));
     } catch (e) {

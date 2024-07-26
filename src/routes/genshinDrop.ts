@@ -1,4 +1,4 @@
-import { Router } from "express";
+import {Router} from "express";
 import axios from "axios";
 import * as https from "node:https";
 import * as http from "node:http";
@@ -16,19 +16,19 @@ axios.interceptors.request.use(request => {
 
 const COOKIE_FILE = './src/cookies.json';
 
-appRouter.get('/', async(req, res) => {
-     const users  = await GenshinDropUser.findAll()
-     const cookies = users.map((user) => {
-         return {
-             "XSRF-TOKEN": "eyJpdiI6ImlpR3VhTFo4MnRQTnRqazJGY0pZa1E9PSIsInZhbHVlIjoiNkdCaG8xMVJlcmZxeFZvNUVoSTF3TmZ1YkJ6d2dqVFFubXc0THN1ek5mN1RGQis4bFVwbjRoSlZ0UFh4My85VUVPTGJ3d2wvSkVkVjBmNmtjZVM0Q0t2dnl5Unk3eElXQW02WmtVbUozYVlxRE9WNWsvMlN3Q0hTeGhyOElXQXMiLCJtYWMiOiJmN2EzMGM2ZDE4NzdlNjI3MTU5NjA2NGNkZjk2M2RmMGRiYmYwY2QwZTJkZjU3YzkxODc4MWJlMGEzMTYyZjg5IiwidGFnIjoiIn0%3D",
-             "__ddg1_": "ePcBjBmCEoamgLXnGSTV",
-             "gd_ses": user.ses,
-             "inviter": user.inviter,
-             [user.webValue]: user.webValue,
-             [user.unknownName]: user.unknownValue
-         }
-     })
-     console.log(cookies)
+appRouter.get('/', async (req, res) => {
+    const users = await GenshinDropUser.findAll()
+    const cookies = users.map((user) => {
+        return {
+            "XSRF-TOKEN": user.xsrf,
+            "__ddg1_": user.ddg,
+            "gd_ses": user.ses,
+            "inviter": user.inviter,
+            [user.webValue]: user.webValue,
+            [user.unknownName]: user.unknownValue
+        }
+    })
+    console.log(cookies)
     try {
         // Чтение куки из файла, если он существует
         let cookies = {};
@@ -66,6 +66,15 @@ appRouter.get('/', async(req, res) => {
 
         res.status(200).send('Request sent and cookies saved.');
 
+    } catch (e) {
+        res.status(401).send({error: e})
+    }
+})
+appRouter.post('/', async (req, res) => {
+    try {
+        const {body}: { body: GenshinDropUserInt } = req
+        const user = await GenshinDropUser.create({...body})
+        res.status(200).send(user);
     } catch (e) {
         res.status(401).send({error: e})
     }
