@@ -1,6 +1,6 @@
-FROM node:slim as base
+FROM node:latest
 
-WORKDIR /ggdrop-ferm
+WORKDIR /app
 
 ENV PNPM_HOME="/pnpm"
 
@@ -13,12 +13,18 @@ RUN corepack enable
 RUN pnpm add -g ts-node
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --force --frozen-lockfile
+RUN pnpm install
 
-COPY prisma ./prisma/
+#COPY prisma ./prisma/
 
 COPY . .
+#RUN npx prisma generate
 
-RUN npx prisma generate
-
-CMD ["ts-node", "./src/index.ts"]
+CMD ["pnpm", "run", "dev"]
+#FROM node:14
+#WORKDIR /usr/src/app
+#COPY package*.json ./
+#RUN npm install
+#COPY . .
+#EXPOSE 3000
+#CMD ["npm", "start"]

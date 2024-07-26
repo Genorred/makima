@@ -4,6 +4,8 @@ import * as https from "node:https";
 import * as http from "node:http";
 import fs from "node:fs";
 import db from "../lib/db";
+import GenshinDropUser, {GenshinDropUserInt} from "../model/genshinDropUser";
+import {Model} from "sequelize";
 // import db from "../lib/db";
 
 const appRouter = Router()
@@ -15,17 +17,18 @@ axios.interceptors.request.use(request => {
 const COOKIE_FILE = './src/cookies.json';
 
 appRouter.get('/', async(req, res) => {
-    const users = await db.genshinDropUser.findMany()
-    const cookies = users.map(user => {
-        return {
-            "XSRF-TOKEN": "eyJpdiI6ImlpR3VhTFo4MnRQTnRqazJGY0pZa1E9PSIsInZhbHVlIjoiNkdCaG8xMVJlcmZxeFZvNUVoSTF3TmZ1YkJ6d2dqVFFubXc0THN1ek5mN1RGQis4bFVwbjRoSlZ0UFh4My85VUVPTGJ3d2wvSkVkVjBmNmtjZVM0Q0t2dnl5Unk3eElXQW02WmtVbUozYVlxRE9WNWsvMlN3Q0hTeGhyOElXQXMiLCJtYWMiOiJmN2EzMGM2ZDE4NzdlNjI3MTU5NjA2NGNkZjk2M2RmMGRiYmYwY2QwZTJkZjU3YzkxODc4MWJlMGEzMTYyZjg5IiwidGFnIjoiIn0%3D",
-            "__ddg1_": "ePcBjBmCEoamgLXnGSTV",
-            "gd_ses": "eyJpdiI6IjZwRUdOV29MSFpjWXl4Tmx6MSs5cHc9PSIsInZhbHVlIjoieW9mTk9zdDhhUFAzY0xOMTJUMG5zM0R0ZU1BbTFLejB1SzdFbTJ3cU1Na2F2Wkw3cUNKdHFmbGQzelFXbXpXRThZMnphVXJzUXgzUlpISWozRnIwbytOTEJIS1liS3RFTFhXRUQycTU5Z2MzdFFyYWkwR3RINzBSb3JFRXpWNTUiLCJtYWMiOiI3MjU0Y2E2OTk4MTQxNjM3NmFhYTFjY2I0MGFjMDU3ODMyYzRmZDdiNDRlZTE1NTc0YWMzODVkMjA4MjAwNjZhIiwidGFnIjoiIn0%3D",
-            "inviter": "eyJpdiI6InpLTVRZZnJIVVYrREkvRG9NanhOdkE9PSIsInZhbHVlIjoiZ2xsb0s0M05wOTJRdURkTnhsak4yL05mWWwwekZuWHM3cUp2SFg3TkU1RUgvYTlUZUVvM2pKVTVvWU55ZWN2MkFEc3A3bHJMYmg1cXpYSjRLQUIvcFE9PSIsIm1hYyI6IjllMTgwOWUyY2Y3ZWRhMjBjZDU5YTJjZGMzMTI4NWJiZTFkMjdjODM4ZDZjYzNjZThiYzk4YjkyNzM4NTUxM2YiLCJ0YWciOiIifQ%3D%3D",
-            "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d": "eyJpdiI6IkFHRHcxNDhyZHBuMUV5KzhCd08xcXc9PSIsInZhbHVlIjoiREVtYnkxYS9GN0RJM3o2TEd5UGJhblV0cVpFZ2hxSUtoOXNQUWgwdStYdE15SzhCWWhkWlZ3Q082SkJ4Y2NaVFFOYlkxdFhrZ3NzaUJtNTltMDBuNzBKVXg0aDZyYS9NUVQvMmJoMnlUeUQvc1lSWll2aTZRVmt0TU5TakpIU3hXQ0J4dEVtMnRvSnhNWlVnaHlqekpBPT0iLCJtYWMiOiI2NGU1YmY1NzkzMWY0OWUwMTg1NTE3ZjhmYWRjZTBjNDEzNTU2YWU5MTY3ZGE4YzM4ZWZmYTU5ODUxNmI5YWY4IiwidGFnIjoiIn0%3D",
-            "l5wXAXz2IEEaGFpaqUT5i4IKNzZYT574FneuwHCj": 'user.unknownName'
-        }
-    })
+     const users  = await GenshinDropUser.findAll()
+     const cookies = users.map((user) => {
+         return {
+             "XSRF-TOKEN": "eyJpdiI6ImlpR3VhTFo4MnRQTnRqazJGY0pZa1E9PSIsInZhbHVlIjoiNkdCaG8xMVJlcmZxeFZvNUVoSTF3TmZ1YkJ6d2dqVFFubXc0THN1ek5mN1RGQis4bFVwbjRoSlZ0UFh4My85VUVPTGJ3d2wvSkVkVjBmNmtjZVM0Q0t2dnl5Unk3eElXQW02WmtVbUozYVlxRE9WNWsvMlN3Q0hTeGhyOElXQXMiLCJtYWMiOiJmN2EzMGM2ZDE4NzdlNjI3MTU5NjA2NGNkZjk2M2RmMGRiYmYwY2QwZTJkZjU3YzkxODc4MWJlMGEzMTYyZjg5IiwidGFnIjoiIn0%3D",
+             "__ddg1_": "ePcBjBmCEoamgLXnGSTV",
+             "gd_ses": user.ses,
+             "inviter": user.inviter,
+             [user.webValue]: user.webValue,
+             [user.unknownName]: user.unknownValue
+         }
+     })
+     console.log(cookies)
     try {
         // Чтение куки из файла, если он существует
         let cookies = {};

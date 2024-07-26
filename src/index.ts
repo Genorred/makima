@@ -6,6 +6,10 @@ import 'dotenv/config'
 import appRouter from './routes'
 import * as fs from "node:fs";
 import axios from "axios";
+import db from "./lib/db";
+import {DataTypes} from "sequelize";
+import importedModels from './model'
+const models = {...importedModels}
 
 const port = process.env.PORT || 5000
 
@@ -18,7 +22,6 @@ app.use('/farm', appRouter)
 app.use(cookieParser());
 
 const COOKIE_FILE = './src/cookies.json';
-console.log(fs.readFileSync(COOKIE_FILE, 'utf-8'))
 app.get('/send-request', async (req, res) => {
     try {
         // Чтение куки из файла, если он существует
@@ -63,11 +66,20 @@ app.get('/send-request', async (req, res) => {
 });
 const start = async () => {
     try {
-        app.listen(port, () => console.log(`Server started on port ${port}`))
+        await db.authenticate()
+        await db.sync().then(result => {
+            console.log("Database connected");
+            app.listen(3000);
+        })
+            .catch(err => console.log(err));
     } catch (e) {
+        console.log(e)
         console.log(e)
     }
 }
+
+// ROLLCAKE XDD uiouijk
+
 
 
 void start()
