@@ -8,6 +8,8 @@ import * as fs from "node:fs";
 import axios from "axios";
 import db from "./lib/db";
 import {DataTypes} from "sequelize";
+import cron from 'node-cron';
+
 import importedModels from './model'
 const models = {...importedModels}
 
@@ -21,54 +23,28 @@ app.use(morgan('combined'));
 app.use('/farm', appRouter)
 app.use(cookieParser());
 
-const COOKIE_FILE = './cookies.json';
-app.get('/send-request', async (req, res) => {
+// axios.interceptors.request.use(request => {
+//     console.log('Starting Request', request);
+//     return request;
+// });
+
+cron.schedule('0 12 * * *', async () => {
     try {
-        // Чтение куки из файла, если он существует
-        let cookies = {};
-        if (fs.existsSync(COOKIE_FILE)) {
-            const cookieData = fs.readFileSync(COOKIE_FILE, 'utf-8');
-            cookies = JSON.parse(cookieData);
-        }
-        console.log(cookies)
-        // Отправка POST-запроса с куки
-        const response = await axios.post('https://genshindrop.com/checkin/checkin', {}, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*',
-                'Accept-Encoding': 'gzip, deflate, br, zstd',
-                'Accept-Language': 'ru',
-                'X-Csrf-Token': 'FrijjrlwTsP6MsR9lPTPm4xPVVzsydcXrlRG3bJ8',
-                'X-Requested-With': 'XMLHttpRequest',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0',
-                'Cookie': Object.entries(cookies).map(([name, value]) => `${name}=${value}`).join('; ')
-            }
-        });
-
-        // Сохранение новых куки в файл
-        const setCookieHeader = response.headers['set-cookie'];
-        if (setCookieHeader) {
-            setCookieHeader.forEach(cookieString => {
-                const [cookie] = cookieString.split(';');
-                const [name, value] = cookie.split('=');
-                // @ts-ignore
-                cookies[name] = value;
-            });
-
-            fs.writeFileSync(COOKIE_FILE, JSON.stringify(cookies, null, 2));
-        }
-
-        res.status(200).send('Request sent and cookies saved.');
+        const response = await axios.get('http://localhost:5000/farm/genshin-drop');
+        console.log('Запрос успешно выполнен:', response.data);
     } catch (error) {
-        console.error('Error sending request:', error);
-        res.status(500).send('Error sending request.');
+        console.error('Ошибка при выполнении запроса:', error);
     }
+
+}, {
+    scheduled: true,
+    timezone: "Europe/Kiev"  // Укажите ваш часовой пояс здесь
 });
 const start = async () => {
     try {
         await db.authenticate()
         await db.sync().then(result => {
-            console.log("Database connected");
+            console.log("Server started on port " + port);
             app.listen(port);
         })
             .catch(err => console.log(err));
@@ -77,9 +53,5 @@ const start = async () => {
         console.log(e)
     }
 }
-
-// ROLLCAKE XDD uiouijk
-
-
 
 void start()

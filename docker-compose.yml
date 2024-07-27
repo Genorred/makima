@@ -1,16 +1,14 @@
 version: "3.9"
 
 services:
-  node_db:
-    container_name: node_db
+  db:
+    container_name: "${POSTGRES_HOST}"
     image: postgres
     restart: always
     ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=node_live_db
-      - POSTGRES_USER=francesco
-      - POSTGRES_PASSWORD=12345
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    env_file:
+      - .env
     volumes:
       - node_db_data:/var/lib/postgresql/data
   farm:
@@ -18,15 +16,10 @@ services:
     image: farm
     restart: always
     depends_on:
-      - node_db
+      - db
     build: .
     ports:
-      - "5000:5000"
-    environment:
-      - PG_DB=node_live_db
-      - PG_USER=francesco
-      - PG_PASSWORD=12345
-      - PG_HOST=node_db
+      - "${PORT}:${PORT}"
     volumes:
       - .:/app
       - /app/node_modules
