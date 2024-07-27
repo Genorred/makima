@@ -3,12 +3,11 @@ import {CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationA
 
 export interface GenshinDropUserInt {
     id: number
-    number: number
+    number: string
     name: string
     csrf: string
     cookies: any
     data: any
-    days: number
 }
 
 
@@ -18,22 +17,20 @@ class GenshinDropUser extends Model<
 > {
     // id can be undefined during creation when using `autoIncrement`
     declare id: CreationOptional<number>;
-    declare number: number
+    declare number: string
     declare name: string
     declare csrf: string
     declare cookies: any
     declare data: any
-    declare days: number
 }
 
 GenshinDropUser.init({
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-        number: {type: DataTypes.INTEGER, unique: true},
+        number: {type: DataTypes.TEXT, unique: true},
         csrf: {type: DataTypes.TEXT, unique: true},
         name: {type: DataTypes.TEXT, unique: true},
         cookies: {type: DataTypes.JSON},
         data: {type: DataTypes.JSON},
-        days: {type: DataTypes.INTEGER},
     },
     {
         sequelize: db,

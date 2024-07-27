@@ -70,4 +70,13 @@ appRouter.post('/', async (req, res) => {
         res.status(401).send({error: e})
     }
 })
+appRouter.delete('/', async (req, res) => {
+    try {
+        const {body}: { body: GenshinDropUserInt } = req
+        const user = await GenshinDropUser.destroy({where: {id: body.id}})
+        res.status(200).send(user);
+    } catch (e) {
+        res.status(401).send({error: e})
+    }
+})
 export default appRouter
