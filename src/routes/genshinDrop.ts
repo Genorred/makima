@@ -41,7 +41,7 @@ appRouter.get('/', async (req, res) => {
                 }
             })()
                 .catch(e => {
-                    console.log(e)
+                    return e
                 }))
         })
         Promise.all(promises).then(result => {
