@@ -45,7 +45,7 @@ appRouter.get('/', async (req, res) => {
                 }))
         })
         Promise.all(promises).then(result => {
-            res.status(200).send('Request sent and cookies saved.');
+            res.status(200).send(result);
         })
     } catch (e) {
         res.status(401).send({error: e})
